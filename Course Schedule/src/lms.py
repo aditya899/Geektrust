@@ -62,7 +62,9 @@ class LMS:
     @staticmethod
     def print_confirmed_course(course, course_offering_id):
         course.set_course_status(CourseStatus.CONFIRMED.value)
-        for employee in course.employees:
+        _employees = course.employees
+        sorted_employees = sorted(course.employees, key=lambda _employees: _employees.registration_number)
+        for employee in sorted_employees:
             print(' '.join([employee.registration_number, employee.email, course_offering_id, course.course_title,
                             course.instructor, course.date, CourseStatus.CONFIRMED.value]))
 
