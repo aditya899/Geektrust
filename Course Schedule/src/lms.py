@@ -42,11 +42,7 @@ class LMS:
         if course_offering_id not in self.lms:
             return
         course = self.lms[course_offering_id]
-        if len(course.employees) == 0 or len(course.employees) < int(course.min_employee):
-            course.set_course_status(CourseStatus.COURSE_CANCELED.value)
-            print(course.get_course_status())
-        else:
-            self.print_confirmed_course(course, course_offering_id)
+        self.print_confirmed_course(course, course_offering_id)
 
     def cancel_registration(self, cancel_details):
         registration_number = cancel_details[1]
@@ -61,12 +57,18 @@ class LMS:
 
     @staticmethod
     def print_confirmed_course(course, course_offering_id):
-        course.set_course_status(CourseStatus.CONFIRMED.value)
         _employees = course.employees
         sorted_employees = sorted(course.employees, key=lambda _employees: _employees.registration_number)
-        for employee in sorted_employees:
-            print(' '.join([employee.registration_number, employee.email, course_offering_id, course.course_title,
-                            course.instructor, course.date, CourseStatus.CONFIRMED.value]))
+        if len(course.employees) == 0 or len(course.employees) < int(course.min_employee):
+            course.set_course_status(CourseStatus.COURSE_CANCELED.value)
+            for employee in sorted_employees:
+                print(' '.join([employee.registration_number, employee.email, course_offering_id, course.course_title,
+                                course.instructor, course.date, CourseStatus.COURSE_CANCELED.value]))
+        else:
+            course.set_course_status(CourseStatus.CONFIRMED.value)
+            for employee in sorted_employees:
+                print(' '.join([employee.registration_number, employee.email, course_offering_id, course.course_title,
+                                course.instructor, course.date, CourseStatus.CONFIRMED.value]))
 
     # def print_added_course(self):
     #     print(self.lms)
